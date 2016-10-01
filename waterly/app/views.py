@@ -4,6 +4,7 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
+
 # Create your views here.
 class Home(View):
     template_name = 'app/index.html'
@@ -21,7 +22,7 @@ class Login(View):
         next = ""
         form = ""
         if self.request.method == 'GET':
-            return render(self.request, 'app/login.html', {'form': form})
+            return render(self.request, self.template_name, {'form': form})
 
         elif request.method == 'POST':
 
@@ -39,7 +40,7 @@ class Login(View):
             except User.DoesNotExist:
                 errors = "Invalid username or password"
                 print "none"
-            return render(self.request,'app/login.html', {'form': form, 'errors': errors})
+            return render(self.request, self.template_name, {'form': form, 'errors': errors})
 
         return render(self.request, self.template_name)
 
