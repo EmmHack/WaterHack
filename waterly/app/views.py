@@ -30,8 +30,8 @@ class Login(View):
                 password = self.request.POST.get('password')
                 user = auth.authenticate(username=username, password=password)
                 if user is not None and user.is_active:
-                    auth.login(request, user)
-                    request.session['username'] = request.POST.get('username')
+                    auth.login(self.request, user)
+                    request.session['username'] = self.request.POST.get('username')
                     return HttpResponseRedirect('/app/')
                 else:
                     errors = "Invalid username or password"
