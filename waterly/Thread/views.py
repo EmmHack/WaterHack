@@ -7,7 +7,6 @@ from Thread.models import Post
 from forms import *
 from django.contrib.auth.models import User
 
-
 def login(request, in_or_out):
     out = True if "out" in in_or_out else False
     ignore = (request.POST.get('todo') == 'redirect')
