@@ -20,6 +20,8 @@ urlpatterns = [
 
     url(r'^$',include('app.urls')),
     url(r'^app/',include('app.urls')),
+    url(r'^accounts/', include('app.urls')),
+    url(r'^accounts/$', include('app.urls')),
     url(r'^api/',include('api.urls')),
     url(r'^admin/', admin.site.urls),
 ]
