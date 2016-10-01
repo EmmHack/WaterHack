@@ -8,3 +8,17 @@ class Home(View):
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
+
+
+class Login(View):
+    template_name = 'app/login.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
+
+class SignUp(View):
+    template_name = 'app/signup.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
