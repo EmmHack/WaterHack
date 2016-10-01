@@ -2,10 +2,12 @@ from django.shortcuts import render
 from rest_framework.test import APIClient
 from rest_framework import generics
 from rest_framework.response import Response
+from django.db.models import Q
+from django.db.models.query import QuerySet
 
-from api.models import Consumer, Address
+from api.models import Consumer, Address, Consumption
 from api.serialisers import ConsumerSerialiser, ConsumptionSerialiser, \
-    AddressSerialiser
+    AddressSerialiser, AvgMunicConsumptionSerialiser, AvgMunicConsumption
 
 
 class ListCreateConsumptionReadings(generics.ListCreateAPIView):
@@ -43,6 +45,59 @@ class ListCreateConsumptionReadings(generics.ListCreateAPIView):
         # TODO: Specify the start date to read from
 
         queryset = Consumption.objects.filter(meter_no=meter_no)
+        return queryset
+
+
+class ListAvgMunicConsumption(generics.ListAPIView):
+    
+    serializer_class = AvgMunicConsumptionSerialiser
+
+    def get(self, *args, **kwargs):
+        """Given municipality calculate and return the average
+        municipality water consumption for given day.
+        
+        Kwargs:
+            kwargs['munic_name'] (str): Municipality name.
+            kwargs['date'] (str): Date to get average on.
+
+        """
+
+        munic_name = kwargs['munic_name']
+        date = kwargs['date']
+        queryset = self.get_queryset(munic_name, date)
+        serializer = AvgMunicConsumptionSerialiser(queryset, many=False)
+
+        return Response(serializer.data)
+
+    def get_queryset(self, munic_name, date):
+        """Construct queryset based on municipality and date.
+        
+        Args:
+            munic_name (str): Municipality name.
+            date (str): Date to get average on.
+
+        Returns:
+           model: Average consumption of the municipality for the given
+            day.
+
+        """
+        addresses = Address.objects.filter(municipality_name=munic_name)
+        consumptions = Consumption.objects.filter(date = date)
+        
+        sum_readings = 0.0
+        count = 0
+
+        for address in addresses:
+            for consumption in consumptions:
+                if consumption.consumer == address.consumer:
+                    sum_readings = sum_readings + consumption.reading
+                    count += 1
+
+        average = sum_readings / count
+        queryset = AvgMunicConsumption.objects.create(munic_name=munic_name, 
+                                                      date=date,
+                                                      avg_reading=average)
+
         return queryset
 
 

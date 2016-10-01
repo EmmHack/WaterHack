@@ -1,16 +1,69 @@
+import csv, json
+
 from django.shortcuts import render, HttpResponseRedirect
 from django.views import View
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.http import JsonResponse
+
+from api.models import Consumer, Address, Consumption
 
 
-# Create your views here.
 class Home(View):
     template_name = 'app/index.html'
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
+
+
+class UploadFixture(View):
+
+    def get(self, request, *args, **kwargs):
+
+        with open('datafiles/consumers.csv', 'rb') as consumers:
+            reader = csv.reader(consumers, delimiter=',', quotechar='|')
+            next(reader, None) 
+            for row in reader:
+                name = row[0]
+                meter_no = row[1]
+                Consumer.objects.create(name=name, meter_no=meter_no)
+
+        with open('datafiles/addresses.csv', 'rb') as addresses:
+            reader = csv.reader(addresses, delimiter=',', quotechar='|')
+            next(reader, None) 
+            for row in reader:
+                meter_no = row[0]
+                building_name = row[1]
+                street_no = row[2]
+                street_name = row[3]
+                suburb_name = row[4]
+                municipality_name = row[5]
+                province_name = row[6]
+
+                consumer = Consumer.objects.filter(meter_no=meter_no)[0]
+                Address.objects.create(consumer=consumer, 
+                                       building_name=building_name,
+                                       street_no=street_no,
+                                       street_name=street_name,
+                                       suburb_name=suburb_name,
+                                       municipality_name=municipality_name,
+                                       province_name=province_name)
+
+        with open('datafiles/consumption.csv', 'rb') as consumption:
+            reader = csv.reader(consumption, delimiter=',', quotechar='|')
+            next(reader, None) 
+            for row in reader:
+                meter_no = row[0]
+                reading = row[1]
+                date = row[2].replace('/', '-')
+
+                consumer = Consumer.objects.filter(meter_no=meter_no)[0]
+                Consumption.objects.create(consumer=consumer, reading=reading,
+                                           date=date)
+
+        response =  {'result': 'data uploaded successfully'}
+        return JsonResponse(response)
 
 
 class Login(View):
