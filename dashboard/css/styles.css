@@ -166,6 +166,10 @@ footer .copy{
    background:none !important;
    color:#666 !important;
    border:0px !important;
+   cursor: pointer;
+}
+.header .dropdown-menu a:hover{
+   cursor: pointer;
 }
 
 .header .dropdown-big{
@@ -585,7 +589,7 @@ body {
 
 .panel-heading>.panel-options, .content-box-header .panel-options {
     float: right;
-    padding-right: 120px;
+    padding-right: 15px;
 }
 
 .panel-heading>.panel-options>a, .content-box-header .panel-options>a {
