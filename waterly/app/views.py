@@ -20,9 +20,8 @@ class Login(View):
 
         errors = ""
         next = ""
-        form = ""
         if self.request.method == 'GET':
-            return render(self.request, self.template_name, {'form': form})
+            return render(self.request, self.template_name)
 
         elif request.method == 'POST':
 
@@ -40,13 +39,28 @@ class Login(View):
             except User.DoesNotExist:
                 errors = "Invalid username or password"
                 print "none"
-            return render(self.request, self.template_name, {'form': form, 'errors': errors})
-
-        return render(self.request, self.template_name)
+            return render(self.request, self.template_name, {'errors': errors})
 
 
 class SignUp(View):
     template_name = 'app/signup.html'
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+
+        if self.request.method == 'GET':
+            return render(self.request, self.template_name)
+        elif self.request.method == 'POST':
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+
+            if User.objects.filter(username=username).exists():
+                errors = "Username already Taken"
+                return render(self.request, self.template_name, {"errors": errors})
+
+            elif User.objects.filter(username=username).exists():
+                errors = "Email already Registered"
+                return render(self.request, self.template_name, {"errors": errors})
+            else:
+                client = User.objects.create_user(username=username, password=password)
+                client.save()
+                return render(self.request, self.template_name)
