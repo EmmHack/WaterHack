@@ -1,6 +1,13 @@
-from django.contrib.auth.forms import AuthenticationForm
+from django import forms
 
 
-class LoginForm(AuthenticationForm):
-    def confirm_login_allowed(self, user):
-        pass
+class submit_post(forms.Form):
+    text = forms.CharField(widget=forms.Textarea)
+
+
+class register_form(forms.Form):
+    username = forms.CharField(required=True)
+    password = forms.CharField(widget=forms.PasswordInput, required=True)
+    first_name = forms.CharField()
+    last_name = forms.CharField()
+    email = forms.CharField()
