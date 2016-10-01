@@ -3,12 +3,16 @@ from rest_framework.test import APIClient
 from rest_framework import generics
 
 from api.models  import Consumer, Address
+from api.serialisers import ConsumerSerialiser, ConsumptionSerialiser, \
+    AddressSerialiser
 
 
-class GetConsumptionData(generics.ListCreateAPIView):
+class ListCreateConsumptionReadings(generics.ListCreateAPIView):
     """Get consumption data for particular consumer in the city.
     
     """
+
+    serializer_class = ConsumptionSerialiser
 
     def get(self, *args, **kwargs):
         """Given identifier for the consumer get their consumption data
@@ -18,9 +22,9 @@ class GetConsumptionData(generics.ListCreateAPIView):
 
         """
 
-        meter_no = int(kwargs['meter_no'])
+        meter_no = kwargs['meter_no']
         queryset = self.get_queryset(meter_no)
-        serializer = ConsumerSerializer(queryset, many=True)
+        serializer = ConsumptionSerialiser(queryset, many=True)
 
         return Response(serializer.data)
 
@@ -51,7 +55,7 @@ class GetConsumers(generics.ListAPIView):
     """
 
     queryset = Consumer.objects.all()
-    serializer_class = ConsumerSerializer
+    serializer_class = ConsumerSerialiser
 
 
 class AddListConsumers(generics.ListCreateAPIView):

@@ -17,13 +17,13 @@ class Consumer(models.Model):
     address = models.OneToOneField(
             Address,
             on_delete=models.CASCADE,
+            null=True,
     )
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
 
 class Consumption(models.Model):
-    meter_no = models.CharField(max_length=15)
-    value = models.FloatField()
+    reading = models.FloatField()
     consumer = models.ForeignKey(Consumer, on_delete=models.CASCADE)
     date = models.DateField()
