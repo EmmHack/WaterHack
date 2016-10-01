@@ -11,19 +11,19 @@ class Address(models.Model):
     province_name = models.CharField(max_length=30)
 
 
-class Meter(models.Model):
-    meter_no = models.CharField(max_length=15, primary_key=True)
-    daily_consumption = models.FloatField()
-
-
 class Consumer(models.Model):
+    meter_no = models.CharField(max_length=15, primary_key=True)
     name = models.CharField(max_length=30)
-    meter = models.OneToOneField(
-            Meter,
-            on_delete=models.CASCADE,
-            primary_key=True,
-    )
     address = models.OneToOneField(
             Address,
             on_delete=models.CASCADE,
     )
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+
+class Consumption(models.Model):
+    meter_no = models.CharField(max_length=15)
+    value = models.FloatField()
+    consumer = models.ForeignKey(Consumer, on_delete=models.CASCADE)
+    date = models.DateField()
